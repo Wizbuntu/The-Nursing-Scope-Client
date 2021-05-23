@@ -17,7 +17,7 @@ const Ethics = () => {
             <Navbar/>
 
             <Head>
-                <title>Publication Ethics | The Nursing Scope</title>
+                <title>Publication Ethics  | The Nursing Scope</title>
             </Head>
 
 
