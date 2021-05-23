@@ -8,9 +8,25 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tinymce/tinymce-react": "^3.12.4",
+    "@uppy/core": "^1.18.1",
+    "@uppy/react": "^1.11.8",
+    "@uppy/xhr-upload": "^1.7.2",
+    "axios": "^0.21.1",
+    "date-fns": "^2.21.3",
+    "draft-js": "^0.11.7",
+    "js-cookie": "^2.2.1",
     "loadjs": "^4.2.0",
+    "minisearch": "^3.0.2",
     "next": "10.2.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-editor-js": "^1.9.0",
+    "react-hot-toast": "^1.0.2",
+    "react-html-parser": "^2.0.2",
+    "react-loading-skeleton": "^2.2.0",
+    "react-pure-modal": "^2.0.19",
+    "react-truncate": "^2.4.0",
+    "validator": "^13.6.0"
   }
 }

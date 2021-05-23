@@ -3050,6 +3050,97 @@ textarea.form-control-lg {
     border-radius: 1rem;
 }
 
+
+/* Dasboard */
+
+.dashboard-text a {
+    font-family: Nunito;
+    font-weight: 300;
+}
+
+.table-card {
+    border-radius: 0.4rem !important;
+    border: none !important;
+    box-shadow: 0 0 0.875rem 0 rgb(33 37 41 / 5%);
+}
+
+.dashboard-section {
+    background: #e6e6e6;
+}
+
+.article-title {
+    font-family: Nunito;
+    font-size: 16px !important;
+}
+
+.article-title-detail {
+    font-family: Nunito;
+    font-size: 25px !important;
+}
+
+.article-subtitle {
+    font-family: Nunito;
+}
+
+.article-subtitle-detail {
+    font-family: Nunito;
+    font-size: 15px !important;
+}
+
+.article-text {
+    font-family: Nunito;
+    font-size: 16px !important;
+}
+
+.article-author {
+    font-family: Nunito;
+    font-size: 12px;
+}
+
+.article-img {
+    height: 120.16px !important;
+    object-fit: cover !important;
+    width: inherit;
+    border: none !important;
+}
+
+.article-image-detail {
+    width: inherit !important;
+    object-fit: cover !important;
+    height: 250px !important;
+}
+
+.article-create-btn {
+    padding: .3rem .85rem !important;
+    background-color: #3b7ddd !important;
+    border-color: #3b7ddd !important;
+    float: right !important;
+}
+
+.filter-style {
+    margin-top: 7.5rem;
+    padding-top: 4rem;
+}
+
+.filter-style-detail {
+    margin-top: 7.5rem;
+}
+
+.admin-nav-bg {
+    background-color: #e6e6e6 !important;
+    z-index: 2 !important;
+}
+
+@media (max-width: 767px) {
+    .filter-style {
+        margin-top: 0rem !important;
+        padding-top: 1rem !important;
+    }
+}
+
+
+/* Dashboard end */
+
 .form-range::-moz-range-thumb {
     width: 1rem;
     height: 1rem;

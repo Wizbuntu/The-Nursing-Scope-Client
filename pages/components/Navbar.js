@@ -29,15 +29,14 @@ const Navbar = () => {
          <link rel="shortcut icon" type="image/x-icon" href="assets/img/ugonsa_logo.png" />
          <meta name="theme-color" content="#ffffff" />
 
-
-         <link href="/assets/css/theme.css" rel="stylesheet" />
          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+
         </Head>
 
 
         <nav className="navbar navbar-expand-lg navbar-light fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
             <div className="container">
-                <Link href="/"><a className="navbar-brand d-flex align-items-center fw-semi-bold fs-3"> <img className="me-3" src="assets/img/ugonsa_logo.png" width="80" height="80" alt="" />
+                <Link href="/"><a className="navbar-brand d-flex align-items-center fw-semi-bold fs-3"> <img className="me-3" src="/assets/img/ugonsa_logo.png" width="80" height="80" alt="" />
                 </a></Link>
                 <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
                 <div className="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
@@ -62,6 +61,7 @@ const Navbar = () => {
                             </ul>
                         </li>
                     </ul>
+                   
                     <form className="ps-lg-5">
                         <Link href="/login"><a className="btn btn-lg btn-success rounded-pill bg-gradient font-base order-0">Login</a></Link>
                     </form>
