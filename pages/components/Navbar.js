@@ -36,15 +36,16 @@ const Navbar = () => {
 
         <nav className="navbar navbar-expand-lg navbar-light fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
             <div className="container">
-                <Link href="/"><a className="navbar-brand d-flex align-items-center fw-semi-bold fs-3"> <img className="me-3" src="/assets/img/ugonsa_logo.png" width="80" height="80" alt="" />
-                </a></Link>
+               <a href="https://thenursingscope.org/" className="navbar-brand d-flex align-items-center fw-semi-bold fs-3"> <img className="me-3" src="/assets/img/ugonsa_logo.png" width="80" height="80" alt="" />
+                </a>
                 <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
                 <div className="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
                     <ul className="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-                        <li className="nav-item"><Link href="/"><a className={`${router.pathname === '/' && 'active'} nav-link fw-medium`}>Home</a></Link></li>
+                        <li className="nav-item"><a href="https://thenursingscope.org/" className={`${router.pathname === '/' && 'active'} nav-link fw-medium`}>Home</a></li>
                         
                         <li className="nav-item"><Link href="/about"><a className={`${router.pathname === '/about' && 'active'} nav-link fw-medium`}>About</a></Link></li>
                         <li className="nav-item"><Link href="/articles"><a className={`${router.pathname === '/articles' && 'active'} nav-link fw-medium`}>Articles</a></Link></li>
+                        <li className="nav-item"><Link href="/issues"><a className={`${router.pathname === '/issues' && 'active'} nav-link fw-medium`}>Issues</a></Link></li>
                         <li className="nav-item"><Link href="/members"><a className={`${router.pathname === '/members' && 'active'} nav-link fw-medium`}>Board Members</a></Link></li>
 
                         <li className="nav-item dropdown"><a className="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Reviews</a>

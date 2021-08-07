@@ -23,6 +23,10 @@ import {useRouter} from 'next/router'
 // react loading skeleton
 import Skeleton from 'react-loading-skeleton';
 
+// loadash
+import _ from 'lodash'
+
+
 
 // Article Component 
 const Article = () => {
@@ -57,7 +61,8 @@ const Article = () => {
     const [searchQueryText, setSearchQueryText] = useState("")
 
 
-
+    // init _articles
+    let _articles = []
 
     // init fetchData function 
     const fetchData = async(pageNum) => {
@@ -69,8 +74,17 @@ const Article = () => {
 
         // check if success
         if(data.success) {
+            
+            // init _articles
+            _articles = data.articles
+
+            // sortArticles
+            const sortedArticles = _.sortBy(_.sortBy(_articles, a => !isNaN(parseInt(a.startPage)), 'startPage'))
+
+            console.log(sortedArticles)
+
             // update Articles state 
-            setArticles((articles) => [...articles, ...data.articles])
+            setArticles((articles) => [...articles, ...sortedArticles])
 
             // update pageTotal state 
             setPageTotal(data.total)
@@ -188,7 +202,8 @@ const Article = () => {
                                         <div className="accordion-button" role="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
                                             <div className="row w-100 justify-content-center">
                                                 <div className="col-sm-12 font-base"><Link href={`/${article.slug}/${article.id}`}><span className="mb-0 fw-bold text-start fs-1 text-1200">{article.title}</span></Link>
-                                                    <p className="my-2">{article.author}</p>
+                                                    <div className="my-2" dangerouslySetInnerHTML={{__html: article.author}} />
+                                                    <p className="fs-sm">Page: {`${article.startPage} ${article.endPage && `- ${article.endPage}`}`}</p>
                                                 </div>
             
                                             </div>

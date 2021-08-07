@@ -12,9 +12,9 @@ import Head from 'next/head'
 function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
-    loadjs('../vendors/@popperjs/popper.min.js', () => {
-      loadjs('../vendors/bootstrap/bootstrap.min.js', () => {
-          loadjs('../assets/js/theme.js', () => {
+    loadjs('/vendors/@popperjs/popper.min.js', () => {
+      loadjs('/vendors/bootstrap/bootstrap.min.js', () => {
+          loadjs('/assets/js/theme.js', () => {
             loadjs('//widget.cloudinary.com/global/all.js')
           })
       })

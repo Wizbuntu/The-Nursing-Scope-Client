@@ -23,14 +23,23 @@ import MiniSearch from 'minisearch'
 import AuthHoc from '../../Hoc/authHoc'
 
 
+// ReactHtmlParser
+import ReactHtmlParser from 'react-html-parser';
+
+
+
+
 
 // Dashboard component 
 const Dashboard = () => {
 
+
     // init useEffect 
     useEffect(async() => {
         // fetch all articles
-        const {data} = await axios.get(`${process.env.API_ROOT}/article`)
+        const {data} = await axios.get(`${process.env.API_ROOT}/article`)   
+        
+        const {data:volumes} = await axios.get(`${process.env.API_ROOT}/volumes`)
         
         // update Articles state 
         setArticles(data.data.articles)
@@ -38,12 +47,17 @@ const Dashboard = () => {
         // update articleRef
         articleRef.current = data.data.articles
 
-        console.log(data.data.articles)
+        setVolumes(volumes.data)
+
     
     }, [])
 
     // init Articles state 
     const [Articles, setArticles] = useState([])
+
+    // init volume state 
+    const [volumes, setVolumes] = useState([])
+
 
     // init useRef
     const articleRef = useRef([])
@@ -96,6 +110,14 @@ const Dashboard = () => {
         }
     }
 
+    // init getVolumeIssue function
+    const getVolumeIssue = (volId) => {
+        const getVolume = volumes.find((vol) => vol.id === volId)
+
+        if(getVolume) {
+            return `${getVolume.volume} ${getVolume.issue}`
+        }
+    }
 
     return (
         <>
@@ -111,7 +133,7 @@ const Dashboard = () => {
                                 <div className="mt-8">
                                     <form>
                                         <div className="input-group d-flex flex-end-center">
-                                            <input className="form-control rounded-pill border-0 font-base" onChange={(event) => handleSearch(event.target.value)} id="formGroupExampleInput" height="200" type="text" placeholder="search article by title or author" /><img className="input-box-icon me-3" src="assets/img/illustrations/search.png"
+                                            <input className="form-control rounded-pill border-0 font-base" onChange={(event) => handleSearch(event.target.value)} id="formGroupExampleInput" height="200" type="text" placeholder="search article by title or author" /><img className="input-box-icon me-3" src="/assets/img/illustrations/search.png"
                                                 width="18" alt="" />
                                         </div>
                                     </form>
@@ -182,8 +204,9 @@ const Dashboard = () => {
                                         
                                     </h6>
                                     
-                                
-                                    <p className="card-text fs-sm article-author "><Truncate lines={1} ellipsis={<span>...</span>}>{article.author}</Truncate></p>
+                                    <p className="card-text fs-sm article-author"><b>{getVolumeIssue(article.volume)}</b></p>
+                                    
+                                    <div className="card-text fs-sm article-author "><Truncate lines={1} ellipsis={<span>...</span>}>{ReactHtmlParser(article.author)}</Truncate></div>
                                     </div>
                                 </div>
                             </div>

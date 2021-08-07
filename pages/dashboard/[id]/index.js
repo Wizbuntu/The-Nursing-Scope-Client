@@ -30,6 +30,17 @@ import axios from '../../../utils/axiosConfig';
 import AuthHoc from '../../../Hoc/authHoc'
 
 
+// react date picker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+
+
+
+
+
+
+
 
 // init DashboardDetail
 const DashboardDetail = () => {
@@ -42,15 +53,26 @@ const DashboardDetail = () => {
     // init editorRef
     const editorRef = useRef(null);
 
+    // init authorEditorRef
+    const authorEditorRef = useRef(null)
+
+    // init citationEditorRef
+    const citationEditorRef = useRef(null)
+
+    // affiliationEditorRef
+    const affiliationEditorRef = useRef(null)
+
+
     const articleId = id
 
 
     // init ArticleData state
     const [ArticleData, setArticleData] = useState({
         title: "",
-        author: "",
         volume: "",
         keywords: "",
+        startPage: "",
+        endPage: "",
         articleImage: "",
         status: ""
 
@@ -59,35 +81,75 @@ const DashboardDetail = () => {
     // init articleRef
     const abstractRef = useRef(null)
 
+    
+    // init authorDataRef
+    const authorDataRef = useRef(null)
+
+    // init citationDataRef
+    const citationDataRef = useRef(null)
+
+    // init affiliationDataRef
+    const affiliationDataRef = useRef(null)
+
+    // init publishedDate state 
+    const [publishedDate, setPublishedDate] = useState(new Date())
+
+    // init updatedDate state 
+    const [updatedDate, setUpdatedDate] = useState(new Date())
+
+
+
      // init useEffect
-     useEffect(async() => {
+    useEffect(async() => {
         
         // get reponse data from endpoint
         const {data} = await axios.get(`${process.env.API_ROOT}/article/${articleId}`)
 
+        // fetch all volumes
+        const {data:volumeData} = await axios.get(`${process.env.API_ROOT}/volumes`)
+
         
         if(data && data.success) {
+
             // update article data
           setArticleData({...ArticleData,
             title: data.data.title,
-            author: data.data.author,
             keywords: data.data.keywords,
             volume: data.data.volume,
+            startPage: data.data.startPage,
+            endPage: data.data.endPage,
             articleImage: data.data.article_image,
             status: data.data.status
            })
 
-            
+            console.log(data.data)
 
             // update abstractRef
             abstractRef.current = data.data.abstract
 
+            // update authorRef
+            authorDataRef.current = data.data.author
+
+            // update citationRef
+            citationDataRef.current = data.data.citation
+
+            // update affliationRef
+            affiliationDataRef.current = data.data.affiliation
+
+            // update publicationDate
+            setPublishedDate(new Date(data.data.publishedDate))
+
+            // update updatedDate
+            setUpdatedDate(new Date(data.data.updatedDate))
+
+
        
             // update article file
             setArticleFile(data.data.article_file_url)
-        } else {
-            return router.push('/dashboard')
-        }
+
+            // update Volume state 
+            setVolumes(volumeData.data)
+        } 
         
 
 
@@ -96,10 +158,13 @@ const DashboardDetail = () => {
 
 
     // destructure ArticleData 
-    const {title, author, volume, keywords, articleImage, status} = ArticleData
+    const {title, volume, keywords, startPage, endPage, articleImage, status} = ArticleData
 
     // init articleFile state 
     const [articleFile, setArticleFile] = useState("")
+
+    // init Volumes state 
+    const [Volumes, setVolumes] = useState([])
 
 
     // init  Loading state 
@@ -136,12 +201,37 @@ const DashboardDetail = () => {
     }
 
     // init handleEditorChange func
-        const handleEditorChange = (e) => {
+    const handleEditorChange = (e) => {
 
-            // update abstractRef
-            abstractRef.current = e.target.getContent()
+        // update abstractRef
+        abstractRef.current = e.target.getContent()
 
-        }
+    }
+
+    // init handleAuthorChange func
+    const handleAuthorChange = (e) => {
+        // update authorDataRef
+        authorDataRef.current = e.target.getContent()
+    }
+
+    // init handleCitationChange func
+    const handleCitationChange = useCallback((e) => {
+
+        // update Citation ref 
+        citationDataRef.current = e.target.getContent()
+
+
+    }, [])
+
+
+      // init handleAffiliationChange 
+    const handleAffiliationChange = useCallback((e) => {
+
+            // update affliation
+            affiliationDataRef.current = e.target.getContent()
+
+    }, [])
+
 
 
         // init handleArticleFileUpload func
@@ -150,6 +240,10 @@ const DashboardDetail = () => {
             setArticleFile(filePath) 
             
     }
+
+
+
+
 
     // init handleSubmit 
     const handleSubmit = (e) => {
@@ -161,15 +255,24 @@ const DashboardDetail = () => {
 
         // init updateArticle 
         const updateArticle = {
-            title,
-            author,
-            keywords,
-            volume,
+            title: title,
+            author: authorDataRef.current,
+            keywords: keywords,
+            volume: volume,
+            citation: citationDataRef.current,
+            affiliation: affiliationDataRef.current,
+            startPage: startPage,
+            endPage: endPage,
             article_image: articleImage,
             article_file_url: articleFile,
             abstract: abstractRef.current,
-            status: status
+            status: status,
+            publishedDate: publishedDate.toISOString(),
+            updatedDate: updatedDate.toISOString()
         }
+
+
+        console.log(updateArticle)
 
         // axios put request to endpoint 
         axios.put(`${process.env.API_ROOT}/article/${articleId}`, updateArticle)
@@ -263,21 +366,39 @@ const DashboardDetail = () => {
                                         <input type="text" onChange={handleChange('title')} value={title} placeholder="Title" className="form-control" required />
                                        
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-dark">Author(s)</label>
-                                        <input type="text"  onChange={handleChange('author')} value={author}  className="form-control" placeholder="Author" required />
-                                    </div>
-
+                                   
                                     <div className="mb-3">
                                         <label className="form-label text-dark">Keywords</label>
                                         <input type="text"  onChange={handleChange('keywords')} value={keywords}  className="form-control" placeholder="Keywords"/>
                                     </div>
 
+                                   
+                                    
                                     <div className="mb-3">
-                                        <label className="form-label text-dark">Volume</label>
-                                        <input type="text" onChange={handleChange('volume')} value={volume} className="form-control" placeholder="Volume" />
+                                        <label className="form-label text-dark">Start Page</label>
+                                        <input type="text"  onChange={handleChange('startPage')} value={startPage}  className="form-control" placeholder="Pages e.g 1"/>
                                     </div>
 
+                                    <div className="mb-3">
+                                        <label className="form-label text-dark">End Page</label>
+                                        <input type="text"  onChange={handleChange('endPage')} value={endPage}  className="form-control" placeholder="Pages e.g 9"/>
+                                    </div>
+
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-dark">Volume</label>
+                                        <select onChange={handleChange('volume')} className="form-select" aria-label="Default select example">
+                                            <option value="">Select Volume/Issue</option>
+                                            {Volumes.map((vol, index) => {
+                                                return <option key={index} value={vol.id}>{vol.volume} {vol.issue}</option>
+                                            })}
+                                           
+                                            
+                                        </select>
+                                       
+                                    </div>
+                                    
+                                    {/* UPLOADS */}
                                     <div className="row">
                                         <div className="col-lg-6 mt-3 col-md-6 col-sm-12">
                                             
@@ -289,18 +410,121 @@ const DashboardDetail = () => {
                                                 <p style={{fontSize: 13}}>{articleFile && "Article file uploaded successfully"}</p>
                                         </div>
                                     </div>
+                                    
 
+                                     {/* Author */}
+                                     <div className="row">
+                                        <div className="col-md-12 mt-4">
+                                            <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Author</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => authorEditorRef.current = editor}
+                                                initialValue={authorDataRef.current}
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleAuthorChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+                                    
+
+
+                                     {/* Citation */}
+                                     <div className="row mt-4">
+                                        <div className="col-md-12 mt-4">
+                                        <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Citation</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => citationEditorRef.current = editor}
+                                                initialValue={citationDataRef.current}
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleCitationChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+
+                                            
+                                    {/* Affiliation */}
+                                    <div className="row mt-4">
+                                        <div className="col-md-12 mt-4">
+                                        <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Institutional Affliation</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => affiliationEditorRef.current = editor}
+                                                initialValue={affiliationDataRef.current}
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleAffiliationChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                        {/* ABSTRACT */}
                                     <div className="row">
                                         <div className="col-md-12 mt-4">
                                             <label className="form-label text-dark">Abstract</label>
                                            
                                             <Editor
-                                                apiKey="n5e3hrcymam7xktmrzizcvs3cn354e5cvutv8xbg376f8e1h"
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
                                                 onInit={(evt, editor) => editorRef.current = editor}
                                                 initialValue={abstractRef.current}
                                                 init={{
                                                 height: 500,
-                                                menubar: false,
+                                                menubar: true,
                                                 plugins: [
                                                     'advlist autolink lists link image charmap print preview anchor',
                                                     'searchreplace visualblocks code fullscreen',
@@ -318,6 +542,24 @@ const DashboardDetail = () => {
                                                 
                                         </div>
                                     </div>
+
+
+                                     {/* DATE */}
+                                     <div className="row mt-4">
+                                        <div className="col-lg-6 col-md-6 col-sm-12">
+                                        <label className="form-label text-dark date-label">Published Date</label>
+                                        <DatePicker className="form-control" selected={publishedDate} onChange={(date) => setPublishedDate(date)} />
+                                        </div>
+
+                                        <div className="col-lg-6 col-md-6 col-sm-12">
+                                        <label className="form-label text-dark date-label">Updated Date</label>
+                                        <DatePicker className="form-control" selected={updatedDate} onChange={(date) => setUpdatedDate(date)} />
+                                        </div>
+
+                                    </div>
+
+
+
                                     {Loading?  <button type="button" className="btn btn-success mt-4" disabled><div className="spinner-border spinner-border-sm" role="status"><span className="visually-hidden"> Loading...</span></div> Loading...</button> : 
                                      <button type="submit" className="btn btn-success mt-4">Update</button>
                                     }

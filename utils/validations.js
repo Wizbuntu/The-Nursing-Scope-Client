@@ -39,6 +39,10 @@ const createArticle = (articleData) => {
         return "Please enter or paste abstract"
     }
 
+    if (!articleData.startPage) {
+        return "Please enter start page"
+    }
+
 
 }
 
@@ -65,12 +69,30 @@ const addUser = (addUserData) => {
     }
 }
 
+// validate addVolume 
+const addVolume = (addVolumeData) => {
+    if (!addVolumeData.volume) {
+        return "Volume is required"
+    }
+
+    if (!addVolumeData.issue) {
+        return "Issue is required"
+    }
+
+    if (!addVolumeData.date) {
+        return "Please select date"
+    }
+}
+
+
+
 
 // init validations 
 const validations = {
     validateLogin,
     createArticle,
-    addUser
+    addUser,
+    addVolume
 }
 
 //export validations 

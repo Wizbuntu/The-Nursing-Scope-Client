@@ -75,7 +75,7 @@ const Login = () => {
        }
 
        // axios request to login endpoint
-       axios.post('http://localhost:3001/v1/api/login', _loginData)
+       axios.post(`${process.env.API_ROOT}/login`, _loginData)
        .then(({data}) => {
 
            // update Loading state 

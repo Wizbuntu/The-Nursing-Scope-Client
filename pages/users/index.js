@@ -14,6 +14,8 @@ import AuthHoc from '../../Hoc/authHoc'
 // react hot toast
 import toast, { Toaster } from 'react-hot-toast';
 
+// Head
+import Head from 'next/head'
 
 // useEffect and useState
 import {useEffect, useState, Fragment} from 'react'
@@ -153,6 +155,10 @@ const Users = () => {
         <Fragment>
 
             <AdminNav/>
+
+            <Head>
+                <title>Users | The Nursing Scope</title>
+            </Head>
 
             <Toaster/>
 

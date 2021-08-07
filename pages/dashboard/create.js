@@ -1,5 +1,5 @@
 // useState 
-import {useState, useRef, useCallback} from 'react'
+import {useState, useRef, useCallback, useEffect} from 'react'
 
 // adminNav
 import AdminNav from '../components/adminNav'
@@ -22,9 +22,12 @@ import toast, { Toaster } from 'react-hot-toast';
 // Axios
 import axios from '../../utils/axiosConfig';
 
-
 // import AuthHoc 
 import AuthHoc from '../../Hoc/authHoc'
+
+// react date picker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 
@@ -34,24 +37,72 @@ import AuthHoc from '../../Hoc/authHoc'
 const CreateArticle = () => {
 
     // init editorRef
-    const editorRef = useRef(null);
+    const editorRef = useRef(null)
+
+    // init authorEditorRef
+    const authorEditorRef = useRef(null)
+
+    // init citationEditorRef
+    const citationEditorRef = useRef(null)
+
+    // affiliationEditorRef
+    const affiliationEditorRef = useRef(null)
+
+
+    // init useEffect
+    useEffect(async() => {
+            // fetch all volumes
+            const {data} = await axios.get(`${process.env.API_ROOT}/volumes`)
+
+            if(data.success) {
+                // update Volume state 
+                setVolumes(data.data)
+            }
+            
+    }, [])
+
+
 
 
     // init ArticleData state
     const [ArticleData, setArticleData] = useState({
         title: "",
-        author: "",
         volume: "",
+        startPage: "",
+        endPage: "",
         keywords: "",
         articleImage: "",
 
     })
 
+
+
+
+
+    // init Volumes state 
+    const [Volumes, setVolumes] = useState([])
+
     // init abstract state 
     const [abstract, setAbstract] = useState(null)
 
+    // init authorState 
+    const [author, setAuthor] = useState(null)
+
+    // init citation state 
+    const [citation, setCitation] = useState(null)
+
+    // init insitutionalAffilition state 
+    const [affiliation, setAffiliation] = useState(null)
+
+    // init publishedDate state 
+    const [publishedDate, setPublishedDate] = useState(new Date())
+
+    // init updatedDate state 
+    const [updatedDate, setUpdatedDate] = useState(new Date())
+
+
     // destructure ArticleData 
-    const {title, author, volume, keywords, articleImage} = ArticleData
+    const {title, volume, keywords, startPage, endPage, articleImage} = ArticleData
 
     // init articleFile state 
     const [articleFile, setArticleFile] = useState("")
@@ -59,6 +110,9 @@ const CreateArticle = () => {
 
     // init  Loading state 
     const [Loading, setLoading] = useState(false)
+
+
+
 
 
     //init cloudinaryWidget
@@ -100,12 +154,42 @@ const CreateArticle = () => {
       }, [])
 
 
+      // init handleAuthorChange func
+      const handleAuthorChange = useCallback((e) => {
+
+            // update Author
+            setAuthor(e.target.getContent())
+      }, [])
+
+
+      // init handleCitationChange func
+      const handleCitationChange = useCallback((e) => {
+
+        // update Citation stae 
+        setCitation(e.target.getContent())
+
+
+      }, [])
+
+
+      // init handleAffiliationChange 
+      const handleAffiliationChange = useCallback((e) => {
+
+            // update affliation
+            setAffiliation(e.target.getContent())
+
+      }, [])
+
+
       // init handleArticleFileUpload func
       const handleArticleFileUpload = (filePath) => {
           // update Article File state
           setArticleFile(filePath) 
           
       }
+
+
+
 
 
       // init handleSubmit 
@@ -118,13 +202,19 @@ const CreateArticle = () => {
 
             // get articleData 
             const articleData = {
-                title,
-                abstract,
-                keywords, 
-                volume,
-                author, 
+                title: title,
+                abstract: abstract,
+                keywords: keywords,
+                volume: volume,
+                author: author, 
+                citation: citation,
+                affiliation: affiliation,
+                startPage: startPage,
+                endPage: endPage,
                 article_image : articleImage, 
                 article_file_url:  articleFile,
+                publishedDate: publishedDate.toISOString(),
+                updatedDate: updatedDate.toISOString()
                 
             }
 
@@ -141,6 +231,7 @@ const CreateArticle = () => {
             }
             
 
+
             // axios to api endpoint
             axios.post(`${process.env.API_ROOT}/article`, articleData)
             .then(({data}) => {
@@ -153,7 +244,7 @@ const CreateArticle = () => {
                 }
                 
                 // update ArticleData 
-                setArticleData({...articleData, title: "", author: "", keywords: "", volume: "", articleImage: ""})
+                setArticleData({...articleData, title: "", author: "", keywords: "", volume: "", citations: "", pages: "", articleImage: ""})
 
                 // update ArticleFile 
                 setArticleFile("")
@@ -199,10 +290,6 @@ const CreateArticle = () => {
                                         <input type="text" onChange={handleChange('title')} value={title} placeholder="Title" className="form-control" required />
                                        
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-dark">Author(s)</label>
-                                        <input type="text"  onChange={handleChange('author')} value={author}  className="form-control" placeholder="Author" required />
-                                    </div>
 
                                     <div className="mb-3">
                                         <label className="form-label text-dark">Keywords</label>
@@ -210,10 +297,30 @@ const CreateArticle = () => {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label text-dark">Volume</label>
-                                        <input type="text" onChange={handleChange('volume')} value={volume} className="form-control" placeholder="Volume" />
+                                        <label className="form-label text-dark">Start Page</label>
+                                        <input type="text"  onChange={handleChange('startPage')} value={startPage}  className="form-control" placeholder="Pages e.g 1"/>
                                     </div>
 
+                                    <div className="mb-3">
+                                        <label className="form-label text-dark">End Page</label>
+                                        <input type="text"  onChange={handleChange('endPage')} value={endPage}  className="form-control" placeholder="Pages e.g 9"/>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-dark">Volume</label>
+                                        <select onChange={handleChange('volume')} className="form-select" aria-label="Default select example">
+                                            <option value="">Select Volume/Issue</option>
+                                            {Volumes.map((vol, index) => {
+                                                return <option key={index} value={vol.id}>{vol.volume} {vol.issue}</option>
+                                            })}
+                                           
+                                            
+                                        </select>
+                                    </div>
+                                
+
+
+                                    {/* UPLOADS */}
                                     <div className="row">
                                         <div className="col-lg-6 mt-3 col-md-6 col-sm-12">
                                             
@@ -226,17 +333,118 @@ const CreateArticle = () => {
                                         </div>
                                     </div>
 
+
+
+                                    {/* Author */}
                                     <div className="row">
                                         <div className="col-md-12 mt-4">
-                                            <label className="form-label text-dark">Abstract</label>
+                                            <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Author</h5>
                                            
                                             <Editor
-                                                apiKey="n5e3hrcymam7xktmrzizcvs3cn354e5cvutv8xbg376f8e1h"
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => authorEditorRef.current = editor}
+                                                initialValue="<p>Write or paste Author</p>"
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleAuthorChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                    {/* Citation */}
+                                    <div className="row mt-4">
+                                        <div className="col-md-12 mt-4">
+                                        <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Citation</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => citationEditorRef.current = editor}
+                                                initialValue="<p>Write or paste Citations</p>"
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleCitationChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+                                    {/* Affiliation */}
+                                    <div className="row mt-4">
+                                        <div className="col-md-12 mt-4">
+                                        <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Institutional Affliation</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
+                                                onInit={(evt, editor) => affiliationEditorRef.current = editor}
+                                                initialValue="<p>Write or paste Institutional Affliations</p>"
+                                                init={{
+                                                height: 200,
+                                                menubar: true,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar: 'undo redo | formatselect | ' +
+                                                'bold italic backcolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                                
+                                                }}
+                                                onChange={handleAffiliationChange}
+                                            />
+                                                
+                                        </div>
+                                    </div>
+
+
+                                    
+
+                                    {/* Abstract */}
+                                    <div className="row mt-4">
+                                        <div className="col-md-12 mt-4">
+                                        <h5 className="form-label text-dark font" style={{fontWeight: 600}}>Abstract</h5>
+                                           
+                                            <Editor
+                                                apiKey="b67cavk4n0xfvkqyxyc7xuw1153p9w9yiu79ko4ljk2l36lc"
                                                 onInit={(evt, editor) => editorRef.current = editor}
-                                                initialValue="<p>Write or paste abstract</p>"
+                                                initialValue="<p>Write or paste Abstract</p>"
                                                 init={{
                                                 height: 500,
-                                                menubar: false,
+                                                menubar: true,
                                                 plugins: [
                                                     'advlist autolink lists link image charmap print preview anchor',
                                                     'searchreplace visualblocks code fullscreen',
@@ -254,6 +462,25 @@ const CreateArticle = () => {
                                                 
                                         </div>
                                     </div>
+
+
+
+                                    {/* DATE */}
+                                    <div className="row mt-4">
+                                        <div className="col-lg-6 col-md-6 col-sm-12">
+                                        <label className="form-label text-dark date-label">Published Date</label>
+                                        <DatePicker className="form-control" selected={publishedDate} onChange={(date) => setPublishedDate(date)} />
+                                        </div>
+
+                                        <div className="col-lg-6 col-md-6 col-sm-12">
+                                        <label className="form-label text-dark date-label">Updated Date</label>
+                                        <DatePicker className="form-control" selected={updatedDate} onChange={(date) => setUpdatedDate(date)} />
+                                        </div>
+
+                                    </div>
+
+
+
                                     {Loading?  <button type="button" className="btn btn-success mt-4" disabled><div className="spinner-border spinner-border-sm" role="status"><span className="visually-hidden"> Loading...</span></div> Loading...</button> : 
                                      <button type="submit" className="btn btn-success mt-4">Submit</button>
                                     }
